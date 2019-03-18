@@ -1,3 +1,7 @@
+var OLX_LOGIN = "YOUR-LOGIN"
+var OLX_PASS = "YOUR-PASS"
+var OLX_MESSAGE = "YOUR-MESSAGE"
+
 beforeEach(function () {
   cy.log('Will sign on to OLX.PL')
   cy.clearCookies()
@@ -8,14 +12,14 @@ beforeEach(function () {
   cy.getCookies().should('be.empty')
   cy.clearLocalStorage()
   cy.get('div[class="inlblk rel"]').click()
-  cy.get('input[id="userEmail"]').first().type('')
-  cy.get('input[id="userPass"]').first().type('')
+  cy.get('input[id="userEmail"]').first().type(OLX_LOGIN)
+  cy.get('input[id="userPass"]').first().type(OLX_PASS)
   cy.get('button[id="se_userLogin"]').contains('Zaloguj się').click()
   cy.get('button[class="cookie-close abs cookiesBarClose"]').contains('Akceptuj i Zamknij').click()
 })
 
 function check(url) {
-    cy.wait(15000)
+    cy.wait(1000)
     cy.log('Visit site')
     cy.get('body').then((body) => {
         if (body.find('div[id="offer_removed_by_user"]').length > 0) {
@@ -37,8 +41,7 @@ function check(url) {
                     cy.pause();
                 }
             });
-            var message = "Dzień dobry,\nCzy byliby Państwo zainteresowani interaktywnym spacerem 3D, który zwiększyłby atrakcyjność ogłoszenia i pozwoliłby potencjalnym kupującym przyjrzeć się mieszkaniu o każdej porze dnia i nocy?\n\nPrzykładowy spacer 3D:\nhttps://my.matterport.com/show/?m=8fgikm4hwyf\n\nJeżeli zdecydują się Państwo na dany spacer i pozwolą bym mógł umieścić mieszkanie w realizacjach na stronie, to proponuje kwotę 150 zł brutto. W pozostałych przypadkach obowiązuje cennik, który znajduje się na stronie.\nhttp://www.jarosky.com\n\nZapraszam do kontaktu za pomocą formularza znajdującego się na stronie, mailowo lub przez olx.pl\nPozdrawiam\nBartosz Jarocki"
-            cy.get('textarea[id="ask-text"]').focus().type(message)
+            cy.get('textarea[id="ask-text"]').focus().type(OLX_MESSAGE)
             cy.screenshot(url)
             cy.get('input[data-cy="contact_page_answer_submit"]').focus().click()
             cy.wait(1200000) // 60000 = 60s // 600000 = 10 min // 300000 = 5 min
