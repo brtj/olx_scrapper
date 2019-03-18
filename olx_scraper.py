@@ -10,7 +10,7 @@ def get_data(url):
     retries = urllib3.util.Retry(read=3, backoff_factor=5,
                                  status_forcelist=frozenset([500,501,502,503,504,429]))
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.2 Safari/605.1.15'}
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
     http = urllib3.PoolManager(retries=retries, headers=headers)
     r = http.request_encode_url('GET', url)
     print('HTTP response: %s' % r.status)

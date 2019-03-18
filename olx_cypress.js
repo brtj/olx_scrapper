@@ -5,20 +5,22 @@ var OLX_MESSAGE = "YOUR-MESSAGE"
 beforeEach(function () {
   cy.log('Will sign on to OLX.PL')
   cy.clearCookies()
-  cy.getCookies().should('be.empty')
   cy.clearLocalStorage()
-  cy.visit('https://olx.pl', {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.2 Safari/605.1.15'})
-  cy.clearCookies()
-  cy.getCookies().should('be.empty')
-  cy.clearLocalStorage()
+  cy.visit('https://olx.pl')
   cy.get('div[class="inlblk rel"]').click()
+<<<<<<< HEAD
   cy.get('input[id="userEmail"]').first().type(OLX_LOGIN)
   cy.get('input[id="userPass"]').first().type(OLX_PASS)
+=======
+  cy.get('input[id="userEmail"]').first().type('YOUR-EMAIL')
+  cy.get('input[id="userPass"]').first().type('YOUR-PASSWORD')
+>>>>>>> parent of 23a84ed... Script update
   cy.get('button[id="se_userLogin"]').contains('Zaloguj się').click()
-  cy.get('button[class="cookie-close abs cookiesBarClose"]').contains('Akceptuj i Zamknij').click()
+
 })
 
 function check(url) {
+<<<<<<< HEAD
     cy.wait(1000)
     cy.log('Visit site')
     cy.get('body').then((body) => {
@@ -46,32 +48,35 @@ function check(url) {
             cy.get('input[data-cy="contact_page_answer_submit"]').focus().click()
             cy.wait(1200000) // 60000 = 60s // 600000 = 10 min // 300000 = 5 min
         }
+=======
+    cy.log('Visit site')
+    cy.visit(url)
+    cy.get('ul#contact_methods').get('div[data-rel="phone"]').click()
+    cy.get('ul#contact_methods').contains(' Napisz wiadomość ').click()
+    cy.get('span[class="link spoiler small"]').click()
+    cy.get('h1[class="lheight28 brkword marginbott20 marginright280"]').then(($btn) => {
+    const txt = $btn.text()
+    $btn.focus()
+    cy.log(txt)
+    cy.screenshot(url)
+>>>>>>> parent of 23a84ed... Script update
     })
-}
+    var message = "testowa\nnowalinia"
+    cy.get('textarea[id="ask-text"]').focus().type(message)
+    cy.get('input[data-cy="contact_page_answer_submit"]').focus() //after test send it
+    cy.wait(2000)
 
-function check_ad_isactive(url) {
-    cy.log('Check if ad is available')
-    cy.visit(url, {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.2 Safari/605.1.15'})
-    cy.get('body').then((body) => {
-        if (body.find('div[id="ad-not-available-box"]').length > 0) {
-            cy.log('Add is not active')
-            cy.screenshot(url);
-            }
-        else {
-            cy.log ('Add is active')
-            check(url);
-        }
-        });
 }
 
 describe('Open url', function() {
     it('Read file', function() {
-        cy.fixture('olx_urls_12032019.json').then(urls => {
+        cy.fixture('olx_urls.json').then(urls => {
         for (let i = 0; i < urls.length; i++) {
             cy.log(urls[i]['url'])
-            check_ad_isactive(urls[i]['url'])
+            check(urls[i]['url'])
         }
         });
+
     },
     )
 })
