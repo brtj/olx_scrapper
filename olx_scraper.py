@@ -2,6 +2,7 @@
 import urllib3
 import json
 from bs4 import BeautifulSoup
+import datetime
 
 URL = 'http://www.olx.pl/nieruchomosci/mieszkania/sprzedaz/poznan/?search%5Bprivate_business%5D=private&search%5Bdist%5D=5'
 
@@ -55,32 +56,38 @@ def get_ad_url(pages_list):
             if isitpromoted != None:
                 ahref = offer.find('a', {'class': 'marginright5 link linkWithHash detailsLinkPromoted'})
                 price = offer.find('p', {'class': 'price'}).text.strip('\n\rzł ')
-                print('%s, %s' % (ahref['href'], price))
+                ad_id = offer.find('table', {'summary': 'Ogłoszenie'})['data-id']
+                print('%s, %s, %s' % (ahref['href'], price, ad_id))
                 if 'olx.pl' in ahref['href']:
-                    all_hrefs_olx.append([ahref['href'], price])
+                    all_hrefs_olx.append([ahref['href'], price, ad_id])
                 else:
-                    all_hrefs_otodom.append([ahref['href'], price])
+                    all_hrefs_otodom.append([ahref['href'], price, ad_id])
             else:
                 ahref = offer.find('a', {'class': 'marginright5 link linkWithHash detailsLink'})
                 price = offer.find('p', {'class': 'price'}).text.strip('\n\rzł ')
-                print('%s, %s' % (ahref['href'], price))
+                ad_id = offer.find('table', {'summary': 'Ogłoszenie'})['data-id']
+                print('%s, %s, %s' % (ahref['href'], price, ad_id))
                 if 'olx.pl' in ahref['href']:
-                    all_hrefs_olx.append([ahref['href'], price])
+                    all_hrefs_olx.append([ahref['href'], price, ad_id])
                 else:
-                    all_hrefs_otodom.append([ahref['href'], price])
+                    all_hrefs_otodom.append([ahref['href'], price, ad_id])
     print_to_file_json(all_hrefs_olx, 'olx')
     print_to_file_json(all_hrefs_otodom, 'otodom')
     print('OLX ads: %s, OTODOM ads: %s, TOTAL: %s' % (len(all_hrefs_olx), len(all_hrefs_otodom), total))
 
 
 def print_to_file_csv(hrefs_list):
-    with open('olx_urls.csv', 'w') as f:
+    date = datetime.datetime.today().strftime('%d%m%Y')
+    filename = 'olx_urls_%s' % date
+    with open(filename, 'w') as f:
         for item in hrefs_list:
             f.write("%s,%s\n" % (item[0], item[1]))
 
 def print_to_file_json(hrefs_list,urlsname):
-    jsonfile = [{"url": item[0], "price": item[1]} for item in hrefs_list]
-    with open('%s_urls.json' % urlsname, 'w') as f:
+    date = datetime.datetime.today().strftime('%d%m%Y')
+    name = '%s_%s' % (urlsname, date)
+    jsonfile = [{"url": item[0], "price": item[1], "ad_id": item[2]} for item in hrefs_list]
+    with open('%s.json' % name, 'w') as f:
         json.dump(jsonfile, f, indent=3)
 
 
